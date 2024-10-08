@@ -7,6 +7,8 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout, SimpleRNN
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
 
 # Load data
 data = pd.read_csv('btc_15m.csv')
@@ -45,12 +47,24 @@ model1.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accura
 
 
 # Train model
-history = model1.fit(X_train, y_train, epochs=30, batch_size=1024, verbose=None)
+history1 = model1.fit(X_train, y_train, epochs=30, batch_size=1024, verbose=None)
 
 # Evaluate model
 loss1, accuracy1 = model1.evaluate(X_test,y_test)
 print(f'model_1 loss value is: {loss1} \n')
 print(f'model_1 accuracy is: {accuracy1}')
+
+fig,ax = plt.subplots(1,2,figsize=[12,5])
+ax[0].plot(np.arange(1,101),history1.history['loss'])
+ax[0].set_xlabel('Epoch')
+ax[0].set_ylabel('Loss')
+ax[0].set_title('Loss over learning epochs')
+ax[0].grid()
+ax[1].plot(np.arange(1,101),history1.history['accuracy'])
+ax[1].set_xlabel('Epoch')
+ax[1].set_ylabel('Accuracy')
+ax[1].set_title('Accuracy over learning epochs')
+ax[1].grid()
 
 # Build SimpleRNN model
 model2 = Sequential()
@@ -65,9 +79,21 @@ model2.add(Dense(units=1,activation='tanh'))
 model2.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Train model
-history = model2.fit(X_train, y_train, epochs=30, batch_size=1024, verbose=None)
+history2 = model2.fit(X_train, y_train, epochs=30, batch_size=1024, verbose=None)
 
 # Evaluate model
 loss2, accuracy2 = model2.evaluate(X_test,y_test)
 print(f'model_2 loss value is: {loss2} \n')
 print(f'model_2 accuracy is: {accuracy2}')
+
+fig,ax = plt.subplots(1,2,figsize=[12,5])
+ax[0].plot(np.arange(1,101),history2.history['loss'])
+ax[0].set_xlabel('Epoch')
+ax[0].set_ylabel('Loss')
+ax[0].set_title('Loss over learning epochs')
+ax[0].grid()
+ax[1].plot(np.arange(1,101),history2.history['accuracy'])
+ax[1].set_xlabel('Epoch')
+ax[1].set_ylabel('Accuracy')
+ax[1].set_title('Accuracy over learning epochs')
+ax[1].grid()

@@ -1,4 +1,8 @@
-# required libraries
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[14]:
+
 
 import pandas as pd
 import numpy as np
@@ -10,27 +14,45 @@ from tensorflow.keras.layers import LSTM, Dense, Dropout, SimpleRNN
 import matplotlib.pyplot as plt
 get_ipython().run_line_magic('matplotlib', 'inline')
 
+
+# In[3]:
+
+
 # Load data
-data = pd.read_csv('btc_4h.csv')
+data = pd.read_csv('btc_1h.csv')
 data.drop(columns='timestamp',inplace=True)
 data.head()
 
-# target and more features calculations
+
+# In[4]:
+
+
 data['target'] = (np.sign(data['close']-data['open'])+1)/2
 data['f1'] = data['high']-data['open']
 data['f2'] = data['close']-data['low']
-print(data.head())
+data.head()
 
-print(data.info())
+
+# In[5]:
+
+
+data.info()
+
+
+# In[6]:
+
 
 # feature and target separation
 X = data.drop(columns=['open','close','target'])
 y = data['target']
 
+
+# In[27]:
+
+
 # Split data into train and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=10)
 
-# data normalization
 scaler = MinMaxScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
@@ -47,12 +69,16 @@ model1.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accura
 
 
 # Train model
-history1 = model1.fit(X_train, y_train, epochs=50, batch_size=128, verbose=None)
+history1 = model1.fit(X_train, y_train, epochs=100, batch_size=512)
 
 # Evaluate model
 loss1, accuracy1 = model1.evaluate(X_test,y_test)
 print(f'model_1 loss value is: {loss1} \n')
 print(f'model_1 accuracy is: {accuracy1}')
+
+
+# In[28]:
+
 
 fig,ax = plt.subplots(1,2,figsize=[12,5])
 ax[0].plot(np.arange(1,101),history1.history['loss'])
@@ -65,6 +91,10 @@ ax[1].set_xlabel('Epoch')
 ax[1].set_ylabel('Accuracy')
 ax[1].set_title('Accuracy over learning epochs')
 ax[1].grid()
+
+
+# In[30]:
+
 
 # Build SimpleRNN model
 model2 = Sequential()
@@ -79,12 +109,16 @@ model2.add(Dense(units=1,activation='tanh'))
 model2.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Train model
-history2 = model2.fit(X_train, y_train, epochs=50, batch_size=128, verbose=None)
+history2 = model2.fit(X_train, y_train, epochs=100, batch_size=512)
 
 # Evaluate model
 loss2, accuracy2 = model2.evaluate(X_test,y_test)
 print(f'model_2 loss value is: {loss2} \n')
 print(f'model_2 accuracy is: {accuracy2}')
+
+
+# In[31]:
+
 
 fig,ax = plt.subplots(1,2,figsize=[12,5])
 ax[0].plot(np.arange(1,101),history2.history['loss'])
@@ -97,3 +131,10 @@ ax[1].set_xlabel('Epoch')
 ax[1].set_ylabel('Accuracy')
 ax[1].set_title('Accuracy over learning epochs')
 ax[1].grid()
+
+
+# In[ ]:
+
+
+
+
